@@ -1,0 +1,9 @@
+{
+  "name": "@bookzilla/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and types for Bookzilla microservices",
+  "main": "index.js",
+  "keywords": ["bookstore", "shared"],
+  "author": "",
+  "license": "ISC"
+}

@@ -29,8 +29,13 @@ const SERVICE_NAME = process.env.SERVICE_NAME || "admin-service";
 const logger = createLogger({ service: SERVICE_NAME });
 
 // Middleware
-app.use(helmet());
 app.use(cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(requestId()); // Add request ID to all requests
 app.use(
   morgan("combined", {
@@ -52,11 +57,15 @@ app.get("/health", (req, res) => {
 });
 
 // Swagger API Documentation
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  explorer: true,
-  customCss: ".swagger-ui .topbar { display: none }",
-  customSiteTitle: "Admin Service API Docs",
-}));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Admin Service API Docs",
+  })
+);
 
 // Swagger JSON endpoint
 app.get("/api-docs.json", (req, res) => {

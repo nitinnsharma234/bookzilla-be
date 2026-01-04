@@ -238,6 +238,39 @@ const options = {
             },
           },
         },
+        LoginRequest: {
+          type: "object",
+          required: ["email", "password"],
+          properties: {
+            email: {
+              type: "string",
+              format: "email",
+              example: "admin@bookzilla.com",
+              description: "Admin email address",
+            },
+            password: {
+              type: "string",
+              format: "password",
+              example: "admin123",
+              description: "Admin password",
+            },
+          },
+        },
+        LoginResponse: {
+          type: "object",
+          properties: {
+            token: {
+              type: "string",
+              description: "JWT access token",
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            },
+            email: {
+              type: "string",
+              format: "email",
+              example: "admin@bookzilla.com",
+            },
+          },
+        },
       },
     },
     security: [

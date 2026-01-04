@@ -3,13 +3,13 @@ import authService from "../services/authService.js";
 
 class AuthController {
   async login(req, res) {
-    const result = await authService.login(req.body, req.requestId);
+    const result = await authService.login(req.body);
     return ResponseHandler.success(
       res,
-      result.token,
-      result.message || "Logged in successfully",
-      200
+      { token: result.token, email: result.email },
+      "Logged in successfully"
     );
   }
 }
+
 export default new AuthController();

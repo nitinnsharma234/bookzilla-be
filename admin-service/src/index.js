@@ -15,6 +15,7 @@ import {
 // Import routes
 import bookRoutes from "./routes/bookRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import mediaRoutes from "./routes/mediaRoutes.js";
 
 // Import Swagger config
 import swaggerSpec from "./config/swagger.js";
@@ -74,8 +75,9 @@ app.get("/api-docs.json", (req, res) => {
 });
 
 // API Routes
-app.use("/api/catalog/books", bookRoutes);
+app.use("/catalog/books", bookRoutes);
 app.use("/auth", authRoutes);
+app.use("/media", mediaRoutes);
 
 // 404 handler - must be before error handler
 app.use((req, res, next) => {

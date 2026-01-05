@@ -28,4 +28,4 @@ export {
   RateLimitError,
 } from "./utils/errors.js";
 
-export { generateJwtToken } from "../shared/utils/jwt.js";
+export { generateJwtToken, verifyJwtToken } from "./utils/jwt.js";

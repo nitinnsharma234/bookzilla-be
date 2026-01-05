@@ -185,18 +185,46 @@ export function createHttpClient(config = {}) {
      * Set request ID for the next request
      */
     withRequestId(requestId) {
+      const self = this;
       return {
         get: (url, config = {}) =>
-          this.get(url, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+          self.get(url, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
         post: (url, data, config = {}) =>
-          this.post(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+          self.post(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
         put: (url, data, config = {}) =>
-          this.put(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+          self.put(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
         patch: (url, data, config = {}) =>
-          this.patch(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+          self.patch(url, data, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
         delete: (url, config = {}) =>
-          this.delete(url, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+          self.delete(url, { ...config, headers: { ...config.headers, "x-request-id": requestId } }),
+        withAuth: (authHeader) => self.withHeaders({ "x-request-id": requestId, Authorization: authHeader }),
       };
+    },
+
+    /**
+     * Set custom headers for the next request
+     */
+    withHeaders(headers) {
+      const self = this;
+      return {
+        get: (url, config = {}) =>
+          self.get(url, { ...config, headers: { ...config.headers, ...headers } }),
+        post: (url, data, config = {}) =>
+          self.post(url, data, { ...config, headers: { ...config.headers, ...headers } }),
+        put: (url, data, config = {}) =>
+          self.put(url, data, { ...config, headers: { ...config.headers, ...headers } }),
+        patch: (url, data, config = {}) =>
+          self.patch(url, data, { ...config, headers: { ...config.headers, ...headers } }),
+        delete: (url, config = {}) =>
+          self.delete(url, { ...config, headers: { ...config.headers, ...headers } }),
+      };
+    },
+
+    /**
+     * Set Authorization header for the next request
+     */
+    withAuth(authHeader) {
+      return this.withHeaders({ Authorization: authHeader });
     },
 
     // Expose the raw axios client for advanced use cases

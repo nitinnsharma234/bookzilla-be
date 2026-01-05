@@ -271,6 +271,37 @@ const options = {
             },
           },
         },
+        UploadResponse: {
+          type: "object",
+          properties: {
+            url: {
+              type: "string",
+              format: "uri",
+              description: "CloudFront CDN URL of the uploaded image",
+              example: "https://d1234abcdef.cloudfront.net/uploads/550e8400-e29b-41d4-a716-446655440000.jpg",
+            },
+            key: {
+              type: "string",
+              description: "S3 object key",
+              example: "uploads/550e8400-e29b-41d4-a716-446655440000.jpg",
+            },
+            filename: {
+              type: "string",
+              description: "Generated filename",
+              example: "550e8400-e29b-41d4-a716-446655440000.jpg",
+            },
+            size: {
+              type: "integer",
+              description: "File size in bytes",
+              example: 102400,
+            },
+            mimetype: {
+              type: "string",
+              description: "MIME type of the file",
+              example: "image/jpeg",
+            },
+          },
+        },
       },
     },
     security: [

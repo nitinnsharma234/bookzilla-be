@@ -11,9 +11,9 @@ class BookController {
    * POST /api/catalog/books
    */
   async create(req, res) {
-    const result = await catalogService.createBook(req.body, req.requestId);
+    const authHeader = req.headers.authorization;
+    const result = await catalogService.createBook(req.body, req.requestId, authHeader);
 
-    // Forward the catalog-service response
     return ResponseHandler.success(
       res,
       result.data,
@@ -27,7 +27,8 @@ class BookController {
    * GET /api/catalog/books
    */
   async list(req, res) {
-    const result = await catalogService.getBooks(req.query, req.requestId);
+    const authHeader = req.headers.authorization;
+    const result = await catalogService.getBooks(req.query, req.requestId, authHeader);
 
     return ResponseHandler.success(
       res,
@@ -42,7 +43,8 @@ class BookController {
    */
   async getById(req, res) {
     const { id } = req.params;
-    const result = await catalogService.getBookById(id, req.requestId);
+    const authHeader = req.headers.authorization;
+    const result = await catalogService.getBookById(id, req.requestId, authHeader);
 
     return ResponseHandler.success(
       res,
@@ -57,7 +59,8 @@ class BookController {
    */
   async update(req, res) {
     const { id } = req.params;
-    const result = await catalogService.updateBook(id, req.body, req.requestId);
+    const authHeader = req.headers.authorization;
+    const result = await catalogService.updateBook(id, req.body, req.requestId, authHeader);
 
     return ResponseHandler.success(
       res,
@@ -72,7 +75,8 @@ class BookController {
    */
   async delete(req, res) {
     const { id } = req.params;
-    await catalogService.deleteBook(id, req.requestId);
+    const authHeader = req.headers.authorization;
+    await catalogService.deleteBook(id, req.requestId, authHeader);
 
     return ResponseHandler.success(res, null, "Book deleted successfully");
   }

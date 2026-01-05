@@ -19,11 +19,13 @@ class CatalogService {
    * Create a new book
    * @param {Object} bookData - Book data to create
    * @param {string} requestId - Request ID for tracing
+   * @param {string} authHeader - Authorization header to forward
    * @returns {Promise<Object>} Created book
    */
-  async createBook(bookData, requestId) {
+  async createBook(bookData, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
+      .withAuth(authHeader)
       .post("/books", bookData);
     return response.data;
   }
@@ -32,11 +34,13 @@ class CatalogService {
    * Get all books with optional filters
    * @param {Object} params - Query parameters
    * @param {string} requestId - Request ID for tracing
+   * @param {string} authHeader - Authorization header to forward
    * @returns {Promise<Object>} Books list with pagination
    */
-  async getBooks(params = {}, requestId) {
+  async getBooks(params = {}, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
+      .withAuth(authHeader)
       .get("/books", { params });
     return response.data;
   }
@@ -45,11 +49,13 @@ class CatalogService {
    * Get a single book by ID
    * @param {string} id - Book UUID
    * @param {string} requestId - Request ID for tracing
+   * @param {string} authHeader - Authorization header to forward
    * @returns {Promise<Object>} Book data
    */
-  async getBookById(id, requestId) {
+  async getBookById(id, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
+      .withAuth(authHeader)
       .get(`/books/${id}`);
     return response.data;
   }
@@ -59,11 +65,13 @@ class CatalogService {
    * @param {string} id - Book UUID
    * @param {Object} updateData - Fields to update
    * @param {string} requestId - Request ID for tracing
+   * @param {string} authHeader - Authorization header to forward
    * @returns {Promise<Object>} Updated book
    */
-  async updateBook(id, updateData, requestId) {
+  async updateBook(id, updateData, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
+      .withAuth(authHeader)
       .put(`/books/${id}`, updateData);
     return response.data;
   }
@@ -72,11 +80,13 @@ class CatalogService {
    * Delete a book
    * @param {string} id - Book UUID
    * @param {string} requestId - Request ID for tracing
+   * @param {string} authHeader - Authorization header to forward
    * @returns {Promise<void>}
    */
-  async deleteBook(id, requestId) {
+  async deleteBook(id, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
+      .withAuth(authHeader)
       .delete(`/books/${id}`);
     return response.data;
   }

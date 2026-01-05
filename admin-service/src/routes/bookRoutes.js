@@ -1,16 +1,8 @@
 import { Router } from "express";
-import {
-  asyncHandler,
-  authenticateToken,
-  requireAdmin,
-} from "@bookzilla/shared";
+import { asyncHandler } from "@bookzilla/shared";
 import bookController from "../controllers/bookController.js";
 
 const router = Router();
-
-// All routes require authentication and admin role
-router.use(authenticateToken());
-router.use(requireAdmin);
 
 /**
  * @swagger

@@ -21,15 +21,20 @@ import swaggerSpec from "./config/swagger.js";
 dotenv.config();
 
 const app = express();
-const PORT =  8080;
+const PORT = process.env.PORT || 3002;
 const SERVICE_NAME = process.env.SERVICE_NAME || "catalog-service";
 
 // Create service logger
 const logger = createLogger({ service: SERVICE_NAME });
 
 // Middleware
-app.use(helmet());
 app.use(cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(requestId()); // Add request ID to all requests
 app.use(
   morgan("combined", {

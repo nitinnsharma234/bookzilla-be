@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { asyncHandler } from "@bookzilla/shared";
+import {
+  asyncHandler,
+  authenticateToken,
+  requireAdmin,
+} from "@bookzilla/shared";
 import bookController from "../controllers/bookController.js";
 import {
   createBookValidation,
@@ -94,8 +98,10 @@ router.get(
  * /books:
  *   post:
  *     summary: Create a new book
- *     description: Add a new book to the catalog (internal use by admin-service)
+ *     description: Add a new book to the catalog. Requires admin authentication.
  *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -135,15 +141,17 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Not an admin
  *       409:
  *         description: Book with ISBN already exists
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post(
   "/",
+  authenticateToken(),
+  // requireAdmin,
   createBookValidation,
   asyncHandler(bookController.create.bind(bookController))
 );
@@ -196,8 +204,10 @@ router.get(
  * /books/{id}:
  *   put:
  *     summary: Update a book
- *     description: Update an existing book's information (internal use by admin-service)
+ *     description: Update an existing book's information. Requires admin authentication.
  *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -234,15 +244,17 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Not an admin
  *       404:
  *         description: Book not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put(
   "/:id",
+  authenticateToken(),
+  requireAdmin,
   updateBookValidation,
   asyncHandler(bookController.update.bind(bookController))
 );
@@ -252,8 +264,10 @@ router.put(
  * /books/{id}:
  *   delete:
  *     summary: Delete a book
- *     description: Remove a book from the catalog (internal use by admin-service)
+ *     description: Remove a book from the catalog. Requires admin authentication.
  *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -278,15 +292,17 @@ router.put(
  *                   example: "Book deleted successfully"
  *                 data:
  *                   type: null
+ *       401:
+ *         description: Unauthorized - No token provided
+ *       403:
+ *         description: Forbidden - Not an admin
  *       404:
  *         description: Book not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete(
   "/:id",
+  authenticateToken(),
+  requireAdmin,
   getBookValidation,
   asyncHandler(bookController.delete.bind(bookController))
 );

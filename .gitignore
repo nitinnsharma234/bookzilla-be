@@ -14,3 +14,5 @@ coverage/
 .turbo
 /bookzilla/catalog-service
 CLAUDE.md
+.env.*
+DEPLOYMENT.md

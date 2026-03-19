@@ -90,6 +90,22 @@ class CatalogService {
       .delete(`/books/${id}`);
     return response.data;
   }
+
+
+  async createAuthor(author, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .post("/authors", author);
+    return response.data;
+  }
+    async getAuthors(author, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .get("/authors");
+    return response.data;
+  }
 }
 
 export default new CatalogService();

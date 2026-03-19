@@ -16,7 +16,7 @@ import {
 import bookRoutes from "./routes/bookRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import mediaRoutes from "./routes/mediaRoutes.js";
-
+import authorRoutes from "./routes/authorRoutes.js"
 // Import Swagger config
 import swaggerSpec from "./config/swagger.js";
 
@@ -76,6 +76,7 @@ app.get("/api-docs.json", (req, res) => {
 
 // API Routes
 app.use("/catalog/books", bookRoutes);
+app.use("/catalog/authors",authorRoutes)
 app.use("/auth", authRoutes);
 app.use("/media", mediaRoutes);
 

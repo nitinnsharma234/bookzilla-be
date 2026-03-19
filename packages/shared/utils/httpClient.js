@@ -129,12 +129,15 @@ export function createHttpClient(config = {}) {
 
     const { status, data } = error.response;
 
-    // Return upstream error message if available
-    if (data?.message) {
-      const upstreamError = new Error(data.message);
+    // Support both { message } and { error: { message } } response shapes
+    const errorData = data?.error || data;
+
+    if (errorData?.message) {
+      const upstreamError = new Error(errorData.message);
       upstreamError.statusCode = status;
-      upstreamError.code = data.code || "UPSTREAM_ERROR";
-      upstreamError.errors = data.errors;
+      upstreamError.code = errorData.code || "UPSTREAM_ERROR";
+      upstreamError.errors = errorData.errors;
+      upstreamError.isOperational = true;
       return upstreamError;
     }
 

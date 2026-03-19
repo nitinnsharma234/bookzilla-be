@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SERVICE_NAME = process.env.SERVICE_NAME || "api-gateway";
 
 // Middleware
 app.use(helmet());
@@ -20,8 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 // Health check
 app.get("/health", (req, res) => {
   return ResponseHandler.success(res, {
-    status: "Turbo repo healthy",
-    service: process.env.SERVICE_NAME,
+    status: "healthy",
+    service: SERVICE_NAME,
     timestamp: new Date().toISOString(),
   });
 });
@@ -45,7 +46,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 ${process.env.SERVICE_NAME} running on port ${PORT}`);
+  console.log(`🚀 ${SERVICE_NAME} running on port ${PORT}`);
 });
 
 export default app;

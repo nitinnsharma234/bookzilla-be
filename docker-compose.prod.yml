@@ -1,0 +1,265 @@
+version: "3.8"
+
+# ============================================================
+#  Bookzilla — Production Docker Compose
+#  - No local Postgres / Redis / RabbitMQ (use managed cloud)
+#  - Images pulled from GitHub Container Registry (GHCR)
+#  - Caddy handles SSL + reverse proxy (replaces Nginx gateway)
+#
+#  Before running:
+#    export GITHUB_USERNAME=your-github-username
+#    docker compose -f docker-compose.prod.yml up -d
+# ============================================================
+
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  env_file:
+    - .env.production
+  networks:
+    - bookzilla-network
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+
+  # ----------------------------------------------------------
+  # CADDY — Reverse Proxy + Auto SSL (replaces Nginx gateway)
+  # ----------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - bookzilla-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ----------------------------------------------------------
+  # API GATEWAY — Port 3000
+  # ----------------------------------------------------------
+  api-gateway:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-api-gateway:latest
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # AUTH SERVICE — Port 3001
+  # ----------------------------------------------------------
+  auth-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-auth-service:latest
+    expose:
+      - "3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # CATALOG SERVICE — Port 3002
+  # ----------------------------------------------------------
+  catalog-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-catalog-service:latest
+    expose:
+      - "3002"
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # CART SERVICE — Port 3003
+  # ----------------------------------------------------------
+  cart-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-cart-service:latest
+    expose:
+      - "3003"
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # ORDER SERVICE — Port 3004
+  # ----------------------------------------------------------
+  order-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-order-service:latest
+    expose:
+      - "3004"
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # PAYMENT SERVICE — Port 3005
+  # ----------------------------------------------------------
+  payment-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-payment-service:latest
+    expose:
+      - "3005"
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # NOTIFICATION SERVICE — Port 3006
+  # ----------------------------------------------------------
+  notification-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-notification-service:latest
+    expose:
+      - "3006"
+    environment:
+      NODE_ENV: production
+      PORT: 3006
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3006/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # REVIEW SERVICE — Port 3007
+  # ----------------------------------------------------------
+  review-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-review-service:latest
+    expose:
+      - "3007"
+    environment:
+      NODE_ENV: production
+      PORT: 3007
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3007/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # USER SERVICE — Port 3008
+  # ----------------------------------------------------------
+  user-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-user-service:latest
+    expose:
+      - "3008"
+    environment:
+      NODE_ENV: production
+      PORT: 3008
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3008/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # ADMIN SERVICE — Port 3009
+  # ----------------------------------------------------------
+  admin-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-admin-service:latest
+    expose:
+      - "3009"
+    environment:
+      NODE_ENV: production
+      PORT: 3009
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3009/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------------------------
+  # MEDIA SERVICE — Port 3010
+  # ----------------------------------------------------------
+  media-service:
+    <<: *service-defaults
+    image: ghcr.io/${GITHUB_USERNAME}/bookzilla-media-service:latest
+    expose:
+      - "3010"
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3010/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+# ----------------------------------------------------------
+# VOLUMES
+# ----------------------------------------------------------
+volumes:
+  caddy_data:    # SSL certificates — persists across restarts
+  caddy_config:  # Caddy internal config
+
+# ----------------------------------------------------------
+# NETWORKS
+# ----------------------------------------------------------
+networks:
+  bookzilla-network:
+    driver: bridge

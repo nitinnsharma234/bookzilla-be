@@ -92,18 +92,43 @@ class CatalogService {
   }
 
 
-  async createAuthor(author, requestId, authHeader) {
+  async getAuthors(params = {}, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
       .withAuth(authHeader)
-      .post("/authors", author);
+      .get("/authors", { params });
     return response.data;
   }
-    async getAuthors(author, requestId, authHeader) {
+
+  async getAuthorById(id, requestId, authHeader) {
     const response = await this.client
       .withRequestId(requestId)
       .withAuth(authHeader)
-      .get("/authors");
+      .get(`/authors/${id}`);
+    return response.data;
+  }
+
+  async createAuthor(authorData, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .post("/authors", authorData);
+    return response.data;
+  }
+
+  async updateAuthor(id, authorData, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .put(`/authors/${id}`, authorData);
+    return response.data;
+  }
+
+  async deleteAuthor(id, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .delete(`/authors/${id}`);
     return response.data;
   }
 }

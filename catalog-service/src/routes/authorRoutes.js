@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { asyncHandler } from "@bookzilla/shared";
+import { asyncHandler, authenticateToken, requireAdmin } from "@bookzilla/shared";
 import authorController from "../controllers/authorController.js";
 
 const router = Router();
@@ -113,6 +113,7 @@ const router = Router();
  *                     pagination:
  *                       $ref: '#/components/schemas/Pagination'
  */
+router.post("/bulk", authenticateToken(), requireAdmin, asyncHandler(authorController.bulkCreate.bind(authorController)));
 router.get("/", asyncHandler(authorController.list.bind(authorController)));
 
 /**
@@ -180,7 +181,7 @@ router.get("/:id", asyncHandler(authorController.getById.bind(authorController))
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/", asyncHandler(authorController.create.bind(authorController)));
+router.post("/", authenticateToken(), requireAdmin, asyncHandler(authorController.create.bind(authorController)));
 
 /**
  * @swagger
@@ -220,7 +221,7 @@ router.post("/", asyncHandler(authorController.create.bind(authorController)));
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.put("/:id", asyncHandler(authorController.update.bind(authorController)));
+router.put("/:id", authenticateToken(), requireAdmin, asyncHandler(authorController.update.bind(authorController)));
 
 /**
  * @swagger
@@ -254,6 +255,6 @@ router.put("/:id", asyncHandler(authorController.update.bind(authorController)))
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete("/:id", asyncHandler(authorController.delete.bind(authorController)));
+router.delete("/:id", authenticateToken(), requireAdmin, asyncHandler(authorController.delete.bind(authorController)));
 
 export default router;

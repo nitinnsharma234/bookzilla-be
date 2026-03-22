@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { asyncHandler } from "@bookzilla/shared";
+import { asyncHandler, authenticateToken, requireAdmin } from "@bookzilla/shared";
 import bookController from "../controllers/bookController.js";
 
 const router = Router();
@@ -154,7 +154,7 @@ router.get("/", asyncHandler(bookController.list.bind(bookController)));
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/", asyncHandler(bookController.create.bind(bookController)));
+router.post("/", authenticateToken(), requireAdmin, asyncHandler(bookController.create.bind(bookController)));
 
 /**
  * @swagger
@@ -273,7 +273,7 @@ router.get("/:id", asyncHandler(bookController.getById.bind(bookController)));
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.put("/:id", asyncHandler(bookController.update.bind(bookController)));
+router.put("/:id", authenticateToken(), requireAdmin, asyncHandler(bookController.update.bind(bookController)));
 
 /**
  * @swagger
@@ -327,6 +327,6 @@ router.put("/:id", asyncHandler(bookController.update.bind(bookController)));
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete("/:id", asyncHandler(bookController.delete.bind(bookController)));
+router.delete("/:id", authenticateToken(), requireAdmin, asyncHandler(bookController.delete.bind(bookController)));
 
 export default router;

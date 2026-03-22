@@ -1,4 +1,4 @@
-import { ResponseHandler } from "@bookzilla/shared";
+import { ResponseHandler, ValidationError } from "@bookzilla/shared";
 import authorService from "../services/authorService.js";
 
 class AuthorController {
@@ -25,6 +25,15 @@ class AuthorController {
   async delete(req, res) {
     await authorService.deleteAuthor(req.params.id);
     return ResponseHandler.success(res, null, "Author deleted successfully");
+  }
+
+  async bulkCreate(req, res) {
+    const { authors } = req.body;
+    if (!Array.isArray(authors) || !authors.length) {
+      throw new ValidationError("authors array is required");
+    }
+    const result = await authorService.bulkCreateAuthors(authors);
+    return ResponseHandler.success(res, result, "Bulk author upload complete", 201);
   }
 }
 

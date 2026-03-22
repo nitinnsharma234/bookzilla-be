@@ -151,7 +151,7 @@ router.get(
 router.post(
   "/",
   authenticateToken(),
-  // requireAdmin,
+  requireAdmin,
   createBookValidation,
   asyncHandler(bookController.create.bind(bookController))
 );

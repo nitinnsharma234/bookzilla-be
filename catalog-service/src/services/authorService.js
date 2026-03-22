@@ -58,13 +58,14 @@ class AuthorService {
   }
 
   async createAuthor(data) {
-    const { name, bio, photoUrl, birthDate, nationality } = data;
+    console.log("Here is the data ",data)
+    const { name, bio, profileUrl, birthDate, nationality } = data;
 
     const existing = await prisma.author.findFirst({ where: { name } });
     if (existing) throw new ConflictError(`Author with name "${name}" already exists`);
 
     const author = await prisma.author.create({
-      data: { name, bio, photoUrl, nationality, birthDate: birthDate ? new Date(birthDate) : undefined },
+      data: { name, bio, photoUrl:profileUrl, nationality, birthDate: birthDate ? new Date(birthDate) : undefined },
       include: { books: true },
     });
 
@@ -105,6 +106,46 @@ class AuthorService {
     if (!existing) throw new NotFoundError("Author", id);
 
     await prisma.author.delete({ where: { id } });
+  }
+
+  async bulkCreateAuthors(authors) {
+    const errors = [];
+    const toInsert = [];
+
+    // Check existing names in one query
+    const names = authors.map((a) => a.name?.trim()).filter(Boolean);
+    const existing = await prisma.author.findMany({
+      where: { name: { in: names } },
+      select: { name: true },
+    });
+    const existingNames = new Set(existing.map((a) => a.name));
+
+    authors.forEach((row, i) => {
+      const rowNum = i + 2; // +1 for header, +1 for 1-index
+      if (!row.name?.trim()) {
+        errors.push({ row: rowNum, field: "name", message: "name is required" });
+        return;
+      }
+      if (existingNames.has(row.name.trim())) {
+        errors.push({ row: rowNum, field: "name", message: `Author "${row.name}" already exists` });
+        return;
+      }
+      toInsert.push({
+        name: row.name.trim(),
+        bio: row.bio?.trim() || null,
+        photoUrl: row.photoUrl?.trim() || null,
+        nationality: row.nationality?.trim() || null,
+        birthDate: row.birthDate ? new Date(row.birthDate) : null,
+      });
+    });
+
+    if (errors.length) {
+      return { summary: { total: authors.length, inserted: 0, failed: errors.length }, errors };
+    }
+
+    await prisma.author.createMany({ data: toInsert });
+
+    return { summary: { total: authors.length, inserted: toInsert.length, failed: 0 }, errors: [] };
   }
 }
 

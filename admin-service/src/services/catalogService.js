@@ -131,6 +131,22 @@ class CatalogService {
       .delete(`/authors/${id}`);
     return response.data;
   }
+
+  async bulkCreateAuthors(data, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .post("/authors/bulk", data);
+    return response.data;
+  }
+
+  async bulkCreateBooks(data, requestId, authHeader) {
+    const response = await this.client
+      .withRequestId(requestId)
+      .withAuth(authHeader)
+      .post("/books/bulk", data);
+    return response.data;
+  }
 }
 
 export default new CatalogService();

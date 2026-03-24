@@ -87,6 +87,13 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post(
+  "/bulk",
+  authenticateToken(),
+  requireAdmin,
+  asyncHandler(bookController.bulkCreate.bind(bookController))
+);
+
 router.get(
   "/",
   listBooksValidation,

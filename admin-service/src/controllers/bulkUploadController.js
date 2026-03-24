@@ -27,7 +27,7 @@ class BulkUploadController {
     const workbook = xlsx.read(req.file.buffer, { type: "buffer" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rows = xlsx.utils.sheet_to_json(sheet);
-
+    console.log("hey i'm here ")
     if (!rows.length) throw new ValidationError("File is empty");
 
     const result = await catalogService.bulkCreateBooks(

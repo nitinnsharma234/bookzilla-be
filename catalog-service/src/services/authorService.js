@@ -1,6 +1,5 @@
 import { prisma } from "@bookzilla/database";
 import { NotFoundError, ConflictError } from "@bookzilla/shared";
-
 class AuthorService {
   async getAuthors({ page = 1, limit = 20, search } = {}) {
     const skip = (Number(page) - 1) * Number(limit);
@@ -148,7 +147,12 @@ class AuthorService {
     return { summary: { total: authors.length, inserted: toInsert.length, failed: 0 }, errors: [] };
   }
 }
+// async function deleteAuthors() {
+//   const { count } = await prisma.author.deleteMany({});
+//   console.log(`Deleted ${count} authors`);
+// }
 
+// deleteAuthors();
 function formatAuthor(author) {
   return {
     id: author.id,

@@ -63,6 +63,12 @@ class BookController {
     await bookService.deleteBook(id);
     return ResponseHandler.success(res, null, "Book deleted successfully");
   }
+
+  async bulkCreate(req, res) {
+    const { books } = req.body;
+    const result = await bookService.bulkCreateBooks(books);
+    return ResponseHandler.success(res, result, "Bulk book upload complete", 201);
+  }
 }
 
 export default new BookController();
